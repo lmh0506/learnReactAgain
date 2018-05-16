@@ -5,9 +5,12 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
+const session = require('koa-session')
 
 const index = require('./routes/index')
 const users = require('./routes/users')
+
+require('./model.js')
 
 // error handler
 onerror(app)
@@ -19,6 +22,9 @@ app.use(bodyparser({
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
+
+app.keys = ['some secret hurr'];
+app.use(session(app))
 
 // logger
 app.use(async (ctx, next) => {
