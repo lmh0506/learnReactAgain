@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import Login from './container/login'
 import Register from './container/register'
+import BossInfo from './container/bossinfo'
+import GeniusInfo from './container/geniusinfo'
 import AuthRoute from './component/authRoute'
-
-function Boss() {
-  return <h1>boss页面</h1>
-}
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <AuthRoute />
-        <Route path='/boss' component={Boss}></Route>
+        <Route path='/geniusinfo' component={GeniusInfo}></Route>
+        <Route path='/bossinfo' component={BossInfo}></Route>
         <Route path='/login' component={Login}></Route>
         <Route path='/register' component={Register}></Route>
       </div>

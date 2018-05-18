@@ -19,7 +19,7 @@ router.post('/login', async (ctx, next) => {
     if(hasUser) {
         json.code = 0
         json.user = hasUser
-        ctx.session.user = user
+        ctx.session.user = hasUser
     } else {
       json.msg = '用户名不存在或密码错误'
     }
@@ -47,12 +47,43 @@ router.post('/register', async (ctx, next) => {
     json.msg = '用户名已存在'
   } else {
     try {
-      User.create({user, pwd: utils.md5(pwd), type})
+      newUser = new User({user, pwd: utils.md5(pwd), type})
+      let userInfo = await newUser.save()
+      let {_id} = userInfo
       json.code = 0
-      ctx.session.user = user
+      ctx.session.user = {user, type, _id}
     } catch (e) {
       json.msg = e
     }
+  }
+
+  ctx.body = json
+})
+
+router.post('/update', async (ctx, next) => {
+  const { _id } = ctx.session.user
+  let json = {
+    code: -1,
+    msg: ''
+  }
+  if(!_id) {
+    json.msg = '用户未登录'
+    ctx.body = json
+  }
+
+  let userInfo = ctx.request.body
+  let hasUser;
+  try {
+    // new为true则返回最新的数据  select进行筛选数据
+    hasUser = await User.findByIdAndUpdate(_id, userInfo, {new: true, select: _filiter})
+    if(hasUser) {
+        json.code = 0
+        json.user = hasUser
+    } else {
+      json.msg = '用户信息保存出错'
+    }
+  } catch(e) {
+    json.msg = e
   }
 
   ctx.body = json
@@ -64,11 +95,12 @@ router.get('/info', async (ctx, next) => {
     msg: ''
   }
 
-  const user = ctx.session.user
+  const {_id} = ctx.session.user
+  console.log(ctx.session.user)
   let hasUser;
-  if(user) {
+  if(_id) {
     try {
-      hasUser = await User.findOne({user}, _filiter)
+      hasUser = await User.findById({_id}, _filiter)
       json.code = 0;
       json.user = hasUser
     } catch (e) {
