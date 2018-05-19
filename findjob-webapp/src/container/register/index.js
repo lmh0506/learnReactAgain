@@ -4,7 +4,6 @@ import { Redirect } from 'react-router-dom'
 import { List, InputItem, Radio, WingBlank, WhiteSpace, Button } from 'antd-mobile'
 import Logo from '../../component/logo'
 import { register } from '../../redux/user.redux'
-import './index.css'
 
 function mapStateToProps(state) {
   return state.user

@@ -95,11 +95,12 @@ router.get('/info', async (ctx, next) => {
     msg: ''
   }
 
-  const {_id} = ctx.session.user
-  console.log(ctx.session.user)
+  const user= ctx.session.user
+  console.log(user)
   let hasUser;
-  if(_id) {
+  if(user) {
     try {
+      let {_id} = user
       hasUser = await User.findById({_id}, _filiter)
       json.code = 0;
       json.user = hasUser
@@ -119,9 +120,12 @@ router.get('/list', async (ctx, next) => {
     code: -1,
     msg: ''
   }
+
+  const {type} = ctx.request.query
+
   try{
-    let user = await User.find({});
-    json.user = user
+    let users = await User.find({type}, _filiter);
+    json.data = users
     json.code = 0
   }catch(e) {
     json.msg = e
