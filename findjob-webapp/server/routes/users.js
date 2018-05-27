@@ -30,6 +30,14 @@ router.post('/login', async (ctx, next) => {
   ctx.body = json
 })
 
+router.get('/logout', async (ctx, next) => {
+  ctx.session.user = null
+  ctx.body = {
+    code: 0,
+    msg: ''
+  }
+})
+
 router.post('/register', async (ctx, next) => {
   let json = {
     code: -1,

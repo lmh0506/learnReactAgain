@@ -4,17 +4,11 @@ import { Route, Switch } from 'react-router-dom';
 import { NavBar } from 'antd-mobile'
 import NavLinkBar from '../../component/navlink'
 import Boss from '../../component/boss'
-
-function Genius() {
-  return <h2>Genius首页</h2>
-}
+import Genius from '../../component/genius'
+import User from '../../component/user'
 
 function Msg() {
   return <h2>Msg首页</h2>
-}
-
-function User() {
-  return <h2>Me首页</h2>
 }
 
 function mapStateToProps(state) {
@@ -65,7 +59,7 @@ class DashBoard extends Component {
         <NavBar className='fixd-header' mode='dark'>
           {navList.find(v => v.path === pathname).title}
         </NavBar>
-        <div style={{marginTop: 45}}>
+        <div style={{marginTop: 45, position: 'relative', zIndex: 100}}>
           <Switch>
             {navList.map(v => (
               <Route 

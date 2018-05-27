@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios'
-import { WingBlank, WhiteSpace, Card } from 'antd-mobile'
 import UserCard from '../usercard'
 import { getUserList } from '../../redux/chatuser.redux'
 
@@ -15,7 +13,7 @@ class Boss extends Component {
   }
 
   componentDidMount() {
-    this.props.getUserList('genius')
+    this.props.getUserList('boss')
   }
 
   render() {
