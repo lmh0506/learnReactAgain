@@ -56,6 +56,7 @@ export function register({user, pwd, repeatPwd, type}) {
     axios.post('/user/register', {user, pwd, type})
     .then(res => {
       if(res.status === 200 && res.data.code === 0) {
+        localStorage.setItem('token', res.data.token)
         dispatch(authSuccess({user, type}))
       } else {
         dispatch(errorMsg(res.data.msg))
@@ -74,6 +75,7 @@ export function login({user, pwd}) {
     axios.post('/user/login', {user, pwd})
     .then(res => {
       if(res.status === 200 && res.data.code === 0) {
+        localStorage.setItem('token', res.data.token)
         dispatch(authSuccess(res.data.user))
       } else {
         dispatch(errorMsg(res.data.msg))
@@ -87,6 +89,7 @@ export function logoutSubmit() {
     axios.get('/user/logout')
     .then(res => {
       if(res.status === 200 && res.data.code === 0) {
+        localStorage.removeItem('token')
         dispatch(logout())
       } else {
         dispatch(errorMsg(res.data.msg))

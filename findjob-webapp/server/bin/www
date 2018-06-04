@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
+const model = require('../model')
+const Chat = model.getModel('chat')
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +22,25 @@ var port = normalizePort(process.env.PORT || '1128');
  */
 
 var server = http.createServer(app.callback());
+
+
+var io = require('socket.io')(server)
+io.on('connection', socket => {
+  console.log('user login')
+  socket.on('sendmsg', async data => {
+    const {from, to , msg} = data
+    const chatid = [from, to].sort().join('_')
+
+    try {
+      let newChat = new Chat({from, to , content: msg, chatid})
+      let userInfo = await newChat.save()
+      
+      io.emit('recvmsg', userInfo)
+    } catch (e) {
+      console.log(e)
+    }
+  })
+})
 
 /**
  * Listen on provided port, on all network interfaces.

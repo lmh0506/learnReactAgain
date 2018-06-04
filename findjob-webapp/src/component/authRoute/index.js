@@ -18,7 +18,7 @@ class AuthRoute extends Component {
       return null
     }
     // 获取用户信息
-    axios.get('/user/info')
+    axios.get(`/user/info?token=${localStorage.getItem('token')}`)
     .then(res => {
       if(res.status === 200) {
          // 是否登录

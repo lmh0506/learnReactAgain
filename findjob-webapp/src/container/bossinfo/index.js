@@ -28,7 +28,8 @@ class BossInfo extends Component {
   }
 
   handleSave = () => {
-    this.props.updateUser(this.state)
+    let data = {...this.state, token: localStorage.getItem('token')}
+    this.props.updateUser(data)
   }
 
   render() {

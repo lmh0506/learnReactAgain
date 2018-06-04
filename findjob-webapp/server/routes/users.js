@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const model = require('../model')
 const utils = require('utility')
 const User = model.getModel('user')
+const Chat = model.getModel('chat')
 
 const _filiter = {'pwd': 0, '__v': 0}
 
@@ -19,7 +20,8 @@ router.post('/login', async (ctx, next) => {
     if(hasUser) {
         json.code = 0
         json.user = hasUser
-        ctx.session.user = hasUser
+        json.token = (new Date().getTime()*112856).toString(16)
+        ctx.session.user[json.token] = hasUser
     } else {
       json.msg = '用户名不存在或密码错误'
     }
@@ -31,7 +33,8 @@ router.post('/login', async (ctx, next) => {
 })
 
 router.get('/logout', async (ctx, next) => {
-  ctx.session.user = null
+  const token = ctx.request.query.token
+  delete ctx.session.user[token]
   ctx.body = {
     code: 0,
     msg: ''
@@ -55,11 +58,12 @@ router.post('/register', async (ctx, next) => {
     json.msg = '用户名已存在'
   } else {
     try {
-      newUser = new User({user, pwd: utils.md5(pwd), type})
+      let newUser = new User({user, pwd: utils.md5(pwd), type})
       let userInfo = await newUser.save()
       let {_id} = userInfo
       json.code = 0
-      ctx.session.user = {user, type, _id}
+      json.token = (new Date().getTime()*112856).toString(16)
+      ctx.session.user[json.token] = {user, type, _id}
     } catch (e) {
       json.msg = e
     }
@@ -69,7 +73,8 @@ router.post('/register', async (ctx, next) => {
 })
 
 router.post('/update', async (ctx, next) => {
-  const { _id } = ctx.session.user
+  const token = ctx.request.body.token
+  const { _id } = ctx.session.user[token]
   let json = {
     code: -1,
     msg: ''
@@ -102,8 +107,8 @@ router.get('/info', async (ctx, next) => {
     code: -1,
     msg: ''
   }
-
-  const user= ctx.session.user
+  const token = ctx.request.query.token
+  const user = ctx.session.user[token]
   console.log(user)
   let hasUser;
   if(user) {
@@ -135,6 +140,25 @@ router.get('/list', async (ctx, next) => {
     let users = await User.find({type}, _filiter);
     json.data = users
     json.code = 0
+  }catch(e) {
+    json.msg = e
+  }
+
+  ctx.body = json
+})
+
+router.get('/getmsglist', async (ctx, next) => {
+  const token = ctx.request.query.token
+  const user = ctx.session.user[token]
+  console.log(user._id)
+  let json = {
+    code: -1,
+    msg: ''
+  }
+  try{
+    let chat = await Chat.find({})
+    json.code = 0
+    json.msgs = chat
   }catch(e) {
     json.msg = e
   }
