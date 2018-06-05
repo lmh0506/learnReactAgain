@@ -155,10 +155,23 @@ router.get('/getmsglist', async (ctx, next) => {
     code: -1,
     msg: ''
   }
+  
+  
+  let users = {}
   try{
-    let chat = await Chat.find({})
+    let allUser = await User.find({})
+    allUser.forEach(v => {
+      users[v._id] = {name: v.user, avatar: v.avatar}
+    })
+  }catch(e) {
+    json.msg = e
+  }
+
+  try{
+    let chat = await Chat.find({'$or': [{from: user._id}, {to: user._id}]})
     json.code = 0
     json.msgs = chat
+    json.users = users
   }catch(e) {
     json.msg = e
   }

@@ -6,18 +6,24 @@ import NavLinkBar from '../../component/navlink'
 import Boss from '../../component/boss'
 import Genius from '../../component/genius'
 import User from '../../component/user'
+import { getMsgList, recvMsg } from '../../redux/chat.redux'
 
 function Msg() {
   return <h2>Msg首页</h2>
 }
 
 function mapStateToProps(state) {
-  return {
-    user: state.user
-  }
+  return state
 }
 
 class DashBoard extends Component {
+  componentDidMount() {
+    if(!this.props.chat.chatmsg.length) {
+      this.props.getMsgList()
+      this.props.recvMsg()
+    }
+  }
+
   render() {
     const {pathname} = this.props.location
     const user = this.props.user
@@ -77,4 +83,5 @@ class DashBoard extends Component {
 
 export default connect(
   mapStateToProps,
+  { getMsgList, recvMsg }
 )(DashBoard);
