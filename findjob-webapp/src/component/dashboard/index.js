@@ -6,11 +6,8 @@ import NavLinkBar from '../../component/navlink'
 import Boss from '../../component/boss'
 import Genius from '../../component/genius'
 import User from '../../component/user'
+import Msg from '../../component/Msg'
 import { getMsgList, recvMsg } from '../../redux/chat.redux'
-
-function Msg() {
-  return <h2>Msg首页</h2>
-}
 
 function mapStateToProps(state) {
   return state

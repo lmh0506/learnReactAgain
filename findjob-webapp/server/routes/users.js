@@ -21,6 +21,9 @@ router.post('/login', async (ctx, next) => {
         json.code = 0
         json.user = hasUser
         json.token = (new Date().getTime()*112856).toString(16)
+        if(!ctx.session.user) {
+          ctx.session.user = {}
+        }
         ctx.session.user[json.token] = hasUser
     } else {
       json.msg = '用户名不存在或密码错误'
@@ -172,6 +175,30 @@ router.get('/getmsglist', async (ctx, next) => {
     json.code = 0
     json.msgs = chat
     json.users = users
+  }catch(e) {
+    json.msg = e
+  }
+
+  ctx.body = json
+})
+
+router.post('/readmsg', async (ctx, next) => {
+  const {token, from} = ctx.request.body
+  const user = ctx.session.user[token]
+  console.log(user._id)
+  let json = {
+    code: -1,
+    msg: ''
+  }
+  
+  try{
+    let chat = await Chat.update(
+      {from, to: user._id}, 
+      {'$set': {read: true}},
+      {'multi': true}
+    )
+    json.code = 0
+    json.num = chat.nModified
   }catch(e) {
     json.msg = e
   }
